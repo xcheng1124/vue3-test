@@ -75,7 +75,6 @@ const rules = {
 const checkCsrfToken = () => {
   const token = Cookies.get('XSRF-TOKEN')
   console.log('当前CSRF令牌状态:', token || '未获取')
-
   if (!token) {
     console.log('尝试获取CSRF令牌...')
     authStore.getCsrfToken().then(() => {
@@ -85,7 +84,7 @@ const checkCsrfToken = () => {
 }
 
 // 服务器信息
-const serverInfo = ref(null)
+const serverInfo = ref<unknown>(null)
 
 onMounted(async () => {
   // 检查CSRF令牌
@@ -96,7 +95,10 @@ onMounted(async () => {
     const response = await apiService.getServerInfo()
     serverInfo.value = response.data
   } catch (error) {
-    console.error('获取服务器信息失败:', error)
+    // 生产环境不输出错误日志
+    if (import.meta.env.DEV) {
+      console.error('获取服务器信息失败:', error)
+    }
     ElMessage.error('获取服务器信息失败')
   }
 })

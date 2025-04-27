@@ -1,12 +1,19 @@
 import { defineStore } from 'pinia'
 import apiService from '@/api'
-import type { AxiosError } from 'axios'
+import type { AxiosError, AxiosResponse } from 'axios'
 import Cookies from 'js-cookie'
 
 interface UserInfo {
   id: number
   name: string
   email: string
+  [key: string]: unknown
+}
+
+interface ApiResponse<T> {
+  data: T
+  message?: string
+  status?: number
   [key: string]: unknown
 }
 
@@ -107,7 +114,7 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true
 
       try {
-        const response = await apiService.getUserInfo()
+        const response = await apiService.getUserInfo() as AxiosResponse<ApiResponse<UserInfo>>
         if (response.status === 200) {
           this.user = response.data?.data
           this.isAuthenticated = true

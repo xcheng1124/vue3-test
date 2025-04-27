@@ -53,13 +53,19 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       // 优化构建输出
       outDir: 'dist',
       sourcemap: false,
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          drop_console: true, // 生产环境删除console
-          drop_debugger: true // 生产环境删除debugger
+      minify: 'esbuild',
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'element-plus': ['element-plus'],
+            'vendor': ['vue', 'vue-router', 'pinia']
+          }
         }
       }
+    },
+    esbuild: {
+      // pure: mode === 'production' ? ['console.log', 'debugger'] : []
+      drop: ['console', 'debugger'],
     }
   }
 })
